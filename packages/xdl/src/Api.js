@@ -223,13 +223,6 @@ export default class ApiClient {
   static host: string = Config.api.host;
   static port: number = Config.api.port || 80;
 
-  static _versionCache = new Cacher(
-    () => ApiClient.callPathAsync('/--/api/v2/versions'),
-    'versions.json',
-    0,
-    path.join(__dirname, '../caches/versions.json')
-  );
-
   static _schemaCaches = {};
 
   static async callMethodAsync(
@@ -260,7 +253,11 @@ export default class ApiClient {
   }
 
   static async versionsAsync() {
-    return await ApiClient._versionCache.getAsync();
+    return await ApiClient.callPathAsync('/--/api/v2/versions', null, null, {
+      headers: {
+        'Expo-Session': '',
+      },
+    });
   }
 
   static async xdlSchemaAsync(sdkVersion) {
